@@ -56,7 +56,7 @@ public class status extends Fragment implements OnMapReadyCallback {
     int currentPt;
     int mAnimationZoom = 15;
 
-//    int mPinDrawables[] = new int[]{R.drawable.pin_01,
+    //    int mPinDrawables[] = new int[]{R.drawable.pin_01,
 //            R.drawable.pin_02,
 //            R.drawable.pin_03,
 //            R.drawable.pin_04,
@@ -76,6 +76,7 @@ public class status extends Fragment implements OnMapReadyCallback {
     //
     private static SeekBar seekBar;
     private static TextView txtMin;
+
     public status() {
         // Required empty public constructor
     }
@@ -88,23 +89,14 @@ public class status extends Fragment implements OnMapReadyCallback {
 
         View v = inflater.inflate(R.layout.fragment_status, container, false);
 
-//
-//        FragmentManager fragmentMgr = getActivity().getSupportFragmentManager();
-//        SupportMapFragment mMapViewFragment = (SupportMapFragment) fragmentMgr.findFragmentById(R.id.mMapView);
-//        mMapViewFragment.getMapAsync(this);
-
         setSwitch(v);
         setSeekBar(v);
 
         FragmentManager fragmentMgr = getFragmentManager();
         SupportMapFragment mMapViewFragment = (SupportMapFragment) this.getChildFragmentManager().findFragmentById(R.id.map);
         mMapViewFragment.getMapAsync(this);
-
-
-
         return v;
     }
-
 
 
     private void setSwitch(final View v) {
@@ -115,28 +107,28 @@ public class status extends Fragment implements OnMapReadyCallback {
             public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
                 //Toast.makeText(getActivity(), "The Switch is "+b,Toast.LENGTH_SHORT).show();
 
-                if (b){
+                if (b) {
                     Snackbar.make(v, "เปิดสถานะการรับงานเรียบร้อยแล้ว...", Snackbar.LENGTH_SHORT).show();
-                }else{
+                } else {
 
                     final Dialog dialog = new Dialog(getActivity());
                     dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
                     dialog.setContentView(R.layout.item_dialog);
                     dialog.setCancelable(true);
 
-                    TextView textView2 = (TextView)dialog.findViewById(R.id.txtcontent);
+                    TextView textView2 = (TextView) dialog.findViewById(R.id.txtcontent);
                     textView2.setText("ต้องการจะปิดสถานะการรับงานหรือไม่ ?");
 
                     dialog.show();
 
-                    Button button1 = (Button)dialog.findViewById(R.id.button1);
+                    Button button1 = (Button) dialog.findViewById(R.id.button1);
                     button1.setOnClickListener(new View.OnClickListener() {
                         public void onClick(View v) {
                             simpleSwitch.setChecked(false);
                             dialog.cancel();
                         }
                     });
-                    Button button2 = (Button)dialog.findViewById(R.id.button2);
+                    Button button2 = (Button) dialog.findViewById(R.id.button2);
                     button2.setOnClickListener(new View.OnClickListener() {
                         public void onClick(View v) {
                             simpleSwitch.setChecked(true);
@@ -153,7 +145,7 @@ public class status extends Fragment implements OnMapReadyCallback {
         seekBar = (SeekBar) v.findViewById(R.id.seekbar);
         txtMin = (TextView) v.findViewById(R.id.txtmin);
         seekBar.setProgress(50);
-        txtMin.setText(seekBar.getProgress()+" km.");
+        txtMin.setText(seekBar.getProgress() + " km.");
 
         seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             int progress_value;
@@ -162,26 +154,25 @@ public class status extends Fragment implements OnMapReadyCallback {
             public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
 
                 progress_value = i;
-                txtMin.setText(i+" km.");
+                txtMin.setText(i + " km.");
 
 
-                if (i<=20){
-                    circle.setRadius(i*100);
+                if (i <= 20) {
+                    circle.setRadius(i * 100);
                     LatLng location = new LatLng(13.910518999999999, 100.5468817);
-                    mMapView.animateCamera(CameraUpdateFactory.newLatLngZoom(location, 13+(-i/30)));
-                }
-                else if (i<=30){
-                    circle.setRadius(i*100);
+                    mMapView.animateCamera(CameraUpdateFactory.newLatLngZoom(location, 13 + (-i / 30)));
+                } else if (i <= 30) {
+                    circle.setRadius(i * 100);
                     LatLng location = new LatLng(13.910518999999999, 100.5468817);
-                    mMapView.animateCamera(CameraUpdateFactory.newLatLngZoom(location, 12+(-i/50)));
-                }else if (i<=40){
-                    circle.setRadius(i*100);
+                    mMapView.animateCamera(CameraUpdateFactory.newLatLngZoom(location, 12 + (-i / 50)));
+                } else if (i <= 40) {
+                    circle.setRadius(i * 100);
                     LatLng location = new LatLng(13.910518999999999, 100.5468817);
-                    mMapView.animateCamera(CameraUpdateFactory.newLatLngZoom(location, 11+(-i/80)));
-                }else{
-                    circle.setRadius(i*100);
+                    mMapView.animateCamera(CameraUpdateFactory.newLatLngZoom(location, 11 + (-i / 80)));
+                } else {
+                    circle.setRadius(i * 100);
                     LatLng location = new LatLng(13.910518999999999, 100.5468817);
-                    mMapView.animateCamera(CameraUpdateFactory.newLatLngZoom(location, 11+(-i/60)));
+                    mMapView.animateCamera(CameraUpdateFactory.newLatLngZoom(location, 11 + (-i / 60)));
                 }
 
             }
@@ -193,7 +184,7 @@ public class status extends Fragment implements OnMapReadyCallback {
 
             @Override
             public void onStopTrackingTouch(SeekBar seekBar) {
-                txtMin.setText(progress_value+" km.");
+                txtMin.setText(progress_value + " km.");
 
             }
         });
@@ -209,10 +200,10 @@ public class status extends Fragment implements OnMapReadyCallback {
                 .radius(5000)
                 .strokeColor(Color.parseColor("#ff8800"))
                 .strokeWidth(5)
-                .fillColor(Color.argb(20, 50, 10, 255) ));
+                .fillColor(Color.argb(20, 50, 10, 255)));
         LatLng location = new LatLng(13.910518999999999, 100.5468817);
         mMapView.animateCamera(CameraUpdateFactory.newLatLngZoom(location, 11));
-        circle.remove();
+
 //        LatLng location = new LatLng(-33.87365, 151.20689);
 //        circle = mMapView.addCircle(new CircleOptions().center(location)
 //                .strokeColor(Color.parseColor("#E91E63")).radius(100));
@@ -234,7 +225,6 @@ public class status extends Fragment implements OnMapReadyCallback {
 //        });
 //        vAnimator.start();
 //        mMapView.animateCamera(CameraUpdateFactory.newLatLngZoom(location, 10));
-
 
 
     }

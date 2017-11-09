@@ -4,6 +4,7 @@ import android.animation.ValueAnimator;
 import android.app.Dialog;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.os.CountDownTimer;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -11,7 +12,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
-import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.SeekBar;
@@ -75,7 +75,10 @@ public class status extends Fragment implements OnMapReadyCallback {
     private Switch simpleSwitch;
     //
     private static SeekBar seekBar;
-    private static TextView txtMin;
+    private TextView txtMin;
+
+    private TextView txtCount;
+
 
     public status() {
         // Required empty public constructor
@@ -92,10 +95,30 @@ public class status extends Fragment implements OnMapReadyCallback {
         setSwitch(v);
         setSeekBar(v);
 
+        //bindWidget(v);
+
+
         FragmentManager fragmentMgr = getFragmentManager();
         SupportMapFragment mMapViewFragment = (SupportMapFragment) this.getChildFragmentManager().findFragmentById(R.id.map);
         mMapViewFragment.getMapAsync(this);
         return v;
+    }
+
+    private void countTimer() {
+        CountDownTimer cdt = new CountDownTimer(10000, 50) {
+            public void onTick(long millisUntilFinished) {
+                String strTime = String.format("%.1f",(double)millisUntilFinished / 1000);
+                txtCount.setText(strTime);
+            }
+
+            public void onFinish() {
+                txtCount.setText("0");
+            }
+        }.start();
+    }
+
+    private void bindWidget(View v) {
+        txtCount = (TextView) v.findViewById(R.id.txtCount);
     }
 
 
@@ -113,28 +136,42 @@ public class status extends Fragment implements OnMapReadyCallback {
 
                     final Dialog dialog = new Dialog(getActivity());
                     dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
-                    dialog.setContentView(R.layout.item_dialog);
+                    dialog.setContentView(R.layout.dialog_orders);
                     dialog.setCancelable(true);
+                    txtCount = (TextView) dialog.findViewById(R.id.txtCount);
 
-                    TextView textView2 = (TextView) dialog.findViewById(R.id.txtcontent);
-                    textView2.setText("ต้องการจะปิดสถานะการรับงานหรือไม่ ?");
 
+//                    TextView textView2 = (TextView) dialog.findViewById(R.id.txtcontent);
+//                    textView2.setText("ต้องการจะปิดสถานะการรับงานหรือไม่ ?");
+//
                     dialog.show();
+                    new CountDownTimer(60000, 1000) {
 
-                    Button button1 = (Button) dialog.findViewById(R.id.button1);
-                    button1.setOnClickListener(new View.OnClickListener() {
-                        public void onClick(View v) {
-                            simpleSwitch.setChecked(false);
-                            dialog.cancel();
+                        public void onTick(long millisUntilFinished) {
+                            txtCount.setText(""+ millisUntilFinished / 1000);
                         }
-                    });
-                    Button button2 = (Button) dialog.findViewById(R.id.button2);
-                    button2.setOnClickListener(new View.OnClickListener() {
-                        public void onClick(View v) {
-                            simpleSwitch.setChecked(true);
+
+                        public void onFinish() {
+                            txtCount.setText("0");
                             dialog.cancel();
+
                         }
-                    });
+                    }.start();
+//
+//                    Button button1 = (Button) dialog.findViewById(R.id.button1);
+//                    button1.setOnClickListener(new View.OnClickListener() {
+//                        public void onClick(View v) {
+//                            simpleSwitch.setChecked(false);
+//                            dialog.cancel();
+//                        }
+//                    });
+//                    Button button2 = (Button) dialog.findViewById(R.id.button2);
+//                    button2.setOnClickListener(new View.OnClickListener() {
+//                        public void onClick(View v) {
+//                            simpleSwitch.setChecked(true);
+//                            dialog.cancel();
+//                        }
+//                    });
 
                 }
             }

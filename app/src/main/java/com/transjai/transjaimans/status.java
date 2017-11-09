@@ -12,6 +12,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
+import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.SeekBar;
@@ -30,6 +31,13 @@ import com.google.android.gms.maps.model.CircleOptions;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.Polygon;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -78,6 +86,11 @@ public class status extends Fragment implements OnMapReadyCallback {
     private TextView txtMin;
 
     private TextView txtCount;
+    private Dialog dialog;
+    private boolean chk = false;
+
+    //
+    private ValueEventListener velistener;
 
 
     public status() {
@@ -91,23 +104,71 @@ public class status extends Fragment implements OnMapReadyCallback {
         // Inflate the layout for this fragment
 
         View v = inflater.inflate(R.layout.fragment_status, container, false);
-
+        chk=false;
         setSwitch(v);
         setSeekBar(v);
+        showfirebase();
 
-        //bindWidget(v);
-
-
-        FragmentManager fragmentMgr = getFragmentManager();
-        SupportMapFragment mMapViewFragment = (SupportMapFragment) this.getChildFragmentManager().findFragmentById(R.id.map);
-        mMapViewFragment.getMapAsync(this);
+        bindWidget(v);
         return v;
+    }
+
+    private void orderNear() {
+        final Dialog dialog = new Dialog(getActivity());
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        dialog.setContentView(R.layout.dialog_orders);
+        dialog.setCancelable(true);
+        txtCount = (TextView) dialog.findViewById(R.id.txtCount);
+
+        dialog.show();
+        new CountDownTimer(60000, 1000) {
+            public void onTick(long millisUntilFinished) {
+                if (chk==false){
+                    txtCount.setText("" + millisUntilFinished / 1000);
+                }
+            }
+
+            public void onFinish() {
+                txtCount.setText("0");
+                dialog.cancel();
+
+            }
+        }.start();
+
+    }
+
+    private void showfirebase() {
+
+
+        final FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        final DatabaseReference dbref = FirebaseDatabase.getInstance().getReference();
+        dbref.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                for (DataSnapshot itemsnap : dataSnapshot.child("order").getChildren()) {
+
+                    String name = (String) itemsnap.child("status").getValue();
+                    if (name.equals("find_driver")) {
+                        orderNear();
+                    }
+
+                    Toast.makeText(getActivity(), name, Toast.LENGTH_LONG).show();
+                }
+
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                Toast.makeText(getActivity(), "Connected", Toast.LENGTH_SHORT);
+            }
+        });
+
     }
 
     private void countTimer() {
         CountDownTimer cdt = new CountDownTimer(10000, 50) {
             public void onTick(long millisUntilFinished) {
-                String strTime = String.format("%.1f",(double)millisUntilFinished / 1000);
+                String strTime = String.format("%.1f", (double) millisUntilFinished / 1000);
                 txtCount.setText(strTime);
             }
 
@@ -119,6 +180,10 @@ public class status extends Fragment implements OnMapReadyCallback {
 
     private void bindWidget(View v) {
         txtCount = (TextView) v.findViewById(R.id.txtCount);
+        // map
+        FragmentManager fragmentMgr = getFragmentManager();
+        SupportMapFragment mMapViewFragment = (SupportMapFragment) this.getChildFragmentManager().findFragmentById(R.id.map);
+        mMapViewFragment.getMapAsync(this);
     }
 
 
@@ -133,45 +198,30 @@ public class status extends Fragment implements OnMapReadyCallback {
                 if (b) {
                     Snackbar.make(v, "เปิดสถานะการรับงานเรียบร้อยแล้ว...", Snackbar.LENGTH_SHORT).show();
                 } else {
-
-                    final Dialog dialog = new Dialog(getActivity());
+                    chk = true;
+                    dialog = new Dialog(getActivity());
                     dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
-                    dialog.setContentView(R.layout.dialog_orders);
+                    dialog.setContentView(R.layout.item_dialog);
                     dialog.setCancelable(true);
                     txtCount = (TextView) dialog.findViewById(R.id.txtCount);
 
-
-//                    TextView textView2 = (TextView) dialog.findViewById(R.id.txtcontent);
-//                    textView2.setText("ต้องการจะปิดสถานะการรับงานหรือไม่ ?");
-//
+                    TextView textView2 = (TextView) dialog.findViewById(R.id.txtcontent);
+                    textView2.setText("ต้องการจะปิดสถานะการรับงานหรือไม่ ?");
                     dialog.show();
-                    new CountDownTimer(60000, 1000) {
-
-                        public void onTick(long millisUntilFinished) {
-                            txtCount.setText(""+ millisUntilFinished / 1000);
-                        }
-
-                        public void onFinish() {
-                            txtCount.setText("0");
+                    Button button1 = (Button) dialog.findViewById(R.id.button1);
+                    button1.setOnClickListener(new View.OnClickListener() {
+                        public void onClick(View v) {
+                            simpleSwitch.setChecked(false);
                             dialog.cancel();
-
                         }
-                    }.start();
-//
-//                    Button button1 = (Button) dialog.findViewById(R.id.button1);
-//                    button1.setOnClickListener(new View.OnClickListener() {
-//                        public void onClick(View v) {
-//                            simpleSwitch.setChecked(false);
-//                            dialog.cancel();
-//                        }
-//                    });
-//                    Button button2 = (Button) dialog.findViewById(R.id.button2);
-//                    button2.setOnClickListener(new View.OnClickListener() {
-//                        public void onClick(View v) {
-//                            simpleSwitch.setChecked(true);
-//                            dialog.cancel();
-//                        }
-//                    });
+                    });
+                    Button button2 = (Button) dialog.findViewById(R.id.button2);
+                    button2.setOnClickListener(new View.OnClickListener() {
+                        public void onClick(View v) {
+                            simpleSwitch.setChecked(true);
+                            dialog.cancel();
+                        }
+                    });
 
                 }
             }

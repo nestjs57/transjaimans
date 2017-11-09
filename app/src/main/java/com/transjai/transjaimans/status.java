@@ -85,13 +85,24 @@ public class status extends Fragment implements OnMapReadyCallback {
     private static SeekBar seekBar;
     private TextView txtMin;
 
-    private TextView txtCount;
+
+    //data dialog
     private Dialog dialog;
     private boolean chk = false;
+    private TextView txtCount;
+    private TextView txts;
+    private TextView txtm;
+    private TextView txtl;
+    private TextView totalBox;
+    private TextView txtkm;
 
-    //
+    //data direbase
     private ValueEventListener velistener;
-
+    private String status = "";
+    private String NumOfSize_s = "";
+    private String NumOfSize_m = "";
+    private String NumOfSize_l = "";
+    private String km = "";
 
     public status() {
         // Required empty public constructor
@@ -113,23 +124,42 @@ public class status extends Fragment implements OnMapReadyCallback {
         return v;
     }
 
-    private void orderNear() {
-        final Dialog dialog = new Dialog(getActivity());
+
+    private void bindWidgetDialog(){
+        dialog = new Dialog(getActivity());
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
         dialog.setContentView(R.layout.dialog_orders);
         dialog.setCancelable(true);
-        txtCount = (TextView) dialog.findViewById(R.id.txtCount);
 
+        txtCount = (TextView) dialog.findViewById(R.id.txtCount);
+        txts = (TextView) dialog.findViewById(R.id.txts);
+        txtm = (TextView) dialog.findViewById(R.id.txtm);
+        txtl = (TextView) dialog.findViewById(R.id.txtl);
+        totalBox = (TextView) dialog.findViewById(R.id.totalBox);
+        txtkm = (TextView) dialog.findViewById(R.id.txtkm);
+
+
+    }
+
+    private void orderNear() {
+
+
+        bindWidgetDialog();
         dialog.show();
         new CountDownTimer(60000, 1000) {
             public void onTick(long millisUntilFinished) {
                 if (chk==false){
                     txtCount.setText("" + millisUntilFinished / 1000);
+                    txts.setText(NumOfSize_s);
+                    txtm.setText(NumOfSize_m);
+                    txtl.setText(NumOfSize_l);
+                    int total = Integer.parseInt(NumOfSize_s)+Integer.parseInt(NumOfSize_m)+Integer.parseInt(NumOfSize_l);
+                    totalBox.setText(String.valueOf(total)+" Box");
+                    txtkm.setText(km);
                 }
             }
 
             public void onFinish() {
-                txtCount.setText("0");
                 dialog.cancel();
 
             }
@@ -147,12 +177,17 @@ public class status extends Fragment implements OnMapReadyCallback {
             public void onDataChange(DataSnapshot dataSnapshot) {
                 for (DataSnapshot itemsnap : dataSnapshot.child("order").getChildren()) {
 
-                    String name = (String) itemsnap.child("status").getValue();
-                    if (name.equals("find_driver")) {
+                    status = (String) itemsnap.child("status").getValue();
+                    NumOfSize_s = (String) itemsnap.child("NumOfSize_s").getValue();
+                    NumOfSize_m = (String) itemsnap.child("NumOfSize_m").getValue();
+                    NumOfSize_l = (String) itemsnap.child("NumOfSize_l").getValue();
+                    km = (String) itemsnap.child("km").getValue();
+
+                    if (status.equals("find_driver")) {
                         orderNear();
                     }
 
-                    Toast.makeText(getActivity(), name, Toast.LENGTH_LONG).show();
+                    Toast.makeText(getActivity(), status, Toast.LENGTH_LONG).show();
                 }
 
             }

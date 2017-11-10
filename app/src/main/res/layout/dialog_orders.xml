@@ -321,7 +321,7 @@
                 android:textSize="20sp" />
 
             <TextView
-                android:id="@+id/textView16"
+                android:id="@+id/txtincome"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="bottom"
@@ -379,7 +379,7 @@
             android:orientation="horizontal">
 
             <Button
-                android:id="@+id/button3"
+                android:id="@+id/btnDialog_comfirm"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
@@ -388,7 +388,7 @@
                 android:textColor="@color/colorAccent" />
 
             <Button
-                android:id="@+id/button4"
+                android:id="@+id/btnDialog_cancel"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"

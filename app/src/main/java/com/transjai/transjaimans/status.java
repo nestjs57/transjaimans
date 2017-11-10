@@ -86,7 +86,7 @@ public class status extends Fragment implements OnMapReadyCallback {
     private TextView txtMin;
 
 
-    //data dialog
+    //data dialog near order
     private Dialog dialog;
     private boolean chk = false;
     private TextView txtCount;
@@ -95,14 +95,26 @@ public class status extends Fragment implements OnMapReadyCallback {
     private TextView txtl;
     private TextView totalBox;
     private TextView txtkm;
+    private TextView txtincome;
+    private Button btnDialogConfirm;
+    private Button btnDialogCancel;
 
-    //data direbase
+    //data firebase
     private ValueEventListener velistener;
+    private Boolean confirmOrder = false;
     private String status = "";
     private String NumOfSize_s = "";
     private String NumOfSize_m = "";
     private String NumOfSize_l = "";
     private String km = "";
+    private String income = "";
+    private String String_push = "";
+
+    //subString income
+    private String subString;
+    private String subString_back;
+    private String totalSubString;
+    //
 
     public status() {
         // Required empty public constructor
@@ -137,6 +149,9 @@ public class status extends Fragment implements OnMapReadyCallback {
         txtl = (TextView) dialog.findViewById(R.id.txtl);
         totalBox = (TextView) dialog.findViewById(R.id.totalBox);
         txtkm = (TextView) dialog.findViewById(R.id.txtkm);
+        txtincome = (TextView) dialog.findViewById(R.id.txtincome);
+        btnDialogConfirm = (Button) dialog.findViewById(R.id.btnDialog_comfirm);
+        btnDialogCancel = (Button) dialog.findViewById(R.id.btnDialog_cancel);
 
 
     }
@@ -149,13 +164,42 @@ public class status extends Fragment implements OnMapReadyCallback {
         new CountDownTimer(60000, 1000) {
             public void onTick(long millisUntilFinished) {
                 if (chk==false){
-                    txtCount.setText("" + millisUntilFinished / 1000);
+                    try {
+                        txtCount.setText("" + millisUntilFinished / 1000);
+                    }catch (Exception e){}
                     txts.setText(NumOfSize_s);
                     txtm.setText(NumOfSize_m);
                     txtl.setText(NumOfSize_l);
                     int total = Integer.parseInt(NumOfSize_s)+Integer.parseInt(NumOfSize_m)+Integer.parseInt(NumOfSize_l);
                     totalBox.setText(String.valueOf(total)+" Box");
                     txtkm.setText(km);
+                    //
+                    if (income.length()==4){
+                        subString = income.substring(0,1);
+                        subString_back = income.substring(1,4);
+                        income = subString+","+subString_back;
+                    }
+                    txtincome.setText(income);
+                    //
+                    btnDialogConfirm.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            confirmOrder = true;
+                            final DatabaseReference dbreff = FirebaseDatabase.getInstance().getReference();
+                            dbreff.child("order").child(String_push).child("status").setValue("delivering");
+                            //Toast.makeText(getActivity(), "itemsnap", Toast.LENGTH_SHORT);
+                            dialog.cancel();
+
+                        }
+                    });
+                    btnDialogCancel.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            dialog.cancel();
+                        }
+                    });
+
+
                 }
             }
 
@@ -177,19 +221,22 @@ public class status extends Fragment implements OnMapReadyCallback {
             public void onDataChange(DataSnapshot dataSnapshot) {
                 for (DataSnapshot itemsnap : dataSnapshot.child("order").getChildren()) {
 
-                    status = (String) itemsnap.child("status").getValue();
-                    NumOfSize_s = (String) itemsnap.child("NumOfSize_s").getValue();
-                    NumOfSize_m = (String) itemsnap.child("NumOfSize_m").getValue();
-                    NumOfSize_l = (String) itemsnap.child("NumOfSize_l").getValue();
-                    km = (String) itemsnap.child("km").getValue();
+                    String_push = itemsnap.getKey();
+                    if (confirmOrder==false){
+                        status = (String) itemsnap.child("status").getValue();
+                        NumOfSize_s = (String) itemsnap.child("NumOfSize_s").getValue();
+                        NumOfSize_m = (String) itemsnap.child("NumOfSize_m").getValue();
+                        NumOfSize_l = (String) itemsnap.child("NumOfSize_l").getValue();
+                        income = (String) itemsnap.child("income").getValue();
 
-                    if (status.equals("find_driver")) {
-                        orderNear();
+                        km = (String) itemsnap.child("km").getValue();
+
+                        if (status.equals("find_driver")) {
+                            orderNear();
+                        }
+                        //Toast.makeText(getActivity(), String_push, Toast.LENGTH_LONG).show();
                     }
-
-                    Toast.makeText(getActivity(), status, Toast.LENGTH_LONG).show();
                 }
-
             }
 
             @Override
@@ -206,7 +253,6 @@ public class status extends Fragment implements OnMapReadyCallback {
                 String strTime = String.format("%.1f", (double) millisUntilFinished / 1000);
                 txtCount.setText(strTime);
             }
-
             public void onFinish() {
                 txtCount.setText("0");
             }
@@ -316,7 +362,7 @@ public class status extends Fragment implements OnMapReadyCallback {
     public void onMapReady(GoogleMap googleMap) {
         mMapView = googleMap;
 
-        Toast.makeText(getActivity(), "onMapReady", Toast.LENGTH_SHORT).show();
+        //Toast.makeText(getActivity(), "onMapReady", Toast.LENGTH_SHORT).show();
         circle = mMapView.addCircle(new CircleOptions()
                 .center(new LatLng(13.910518999999999, 100.5468817))
                 .radius(5000)

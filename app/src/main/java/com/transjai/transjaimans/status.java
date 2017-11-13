@@ -111,9 +111,9 @@ public class status extends Fragment implements OnMapReadyCallback {
     private String String_push = "";
 
     //subString income
-    private String subString;
-    private String subString_back;
-    private String totalSubString;
+    private String subString = "";
+    private String subString_back = "";
+    private String totalSubString = "";
     //
 
     public status() {
@@ -170,16 +170,30 @@ public class status extends Fragment implements OnMapReadyCallback {
                     txts.setText(NumOfSize_s);
                     txtm.setText(NumOfSize_m);
                     txtl.setText(NumOfSize_l);
+
                     int total = Integer.parseInt(NumOfSize_s)+Integer.parseInt(NumOfSize_m)+Integer.parseInt(NumOfSize_l);
                     totalBox.setText(String.valueOf(total)+" Box");
+
+
                     txtkm.setText(km);
                     //
-                    if (income.length()==4){
-                        subString = income.substring(0,1);
-                        subString_back = income.substring(1,4);
-                        income = subString+","+subString_back;
+//                    try {
+//                        if (income.length()==4){
+//                            subString = income.substring(0,1);
+//                            subString_back = income.substring(1,4);
+//                            income = subString+","+subString_back;
+//                        }
+//                    }catch (Exception e){
+//
+//                    }
+
+
+                    try {
+                        txtincome.setText(income.substring(0,1)+","+income.substring(1,4));
+
+                    }catch (Exception e){
+
                     }
-                    txtincome.setText(income);
                     //
                     btnDialogConfirm.setOnClickListener(new View.OnClickListener() {
                         @Override
@@ -231,10 +245,16 @@ public class status extends Fragment implements OnMapReadyCallback {
 
                         km = (String) itemsnap.child("km").getValue();
 
-                        if (status.equals("find_driver")) {
-                            orderNear();
+
+                        try {
+                            if (status.equals("find_driver")) {
+                                orderNear();
+                            }
+                            //Toast.makeText(getActivity(), String_push, Toast.LENGTH_LONG).show();
+                        }catch (Exception e){
+
                         }
-                        //Toast.makeText(getActivity(), String_push, Toast.LENGTH_LONG).show();
+
                     }
                 }
             }

@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.RequiresApi;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
 import android.view.LayoutInflater;
@@ -15,6 +16,7 @@ import android.view.Window;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -51,6 +53,7 @@ public class order extends Fragment {
     private LinearLayout linear6;
     private LinearLayout linearAll;
     private Button btnfinish;
+    private RelativeLayout relativeLayout;
 
     public order() {
         // Required empty public constructor
@@ -155,6 +158,7 @@ public class order extends Fragment {
         linearAll = (LinearLayout) v.findViewById(R.id.linearAll);
         btnfinish = (Button) v.findViewById(R.id.nextStep);
         linearAll.setVisibility(View.INVISIBLE);
+        relativeLayout = (RelativeLayout) v.findViewById(R.id.relativeAll);
 
 
         btnDetail = (ImageButton) v.findViewById(R.id.btnDetail);
@@ -202,7 +206,17 @@ public class order extends Fragment {
                         linear3.setBackground(ContextCompat.getDrawable(getActivity(), R.drawable.input_outline));
                         linear4.setBackground(ContextCompat.getDrawable(getActivity(), R.drawable.input_outline));
                         linearAll.setVisibility(View.VISIBLE);
+                    }else if (status.equals("Arrived")) {
+//                        linearAll.setVisibility(View.VISIBLE);
+//                        linear2.setBackground(ContextCompat.getDrawable(getActivity(), R.drawable.input_outline));
+//                        linear3.setBackground(ContextCompat.getDrawable(getActivity(), R.drawable.input_outline));
+//                        linear4.setBackground(ContextCompat.getDrawable(getActivity(), R.drawable.input_outline));
+//                        linearAll.setVisibility(View.VISIBLE);
+                        relativeLayout.setVisibility(View.INVISIBLE);
+                        Snackbar.make(getView(), "Finish this order.", Snackbar.LENGTH_SHORT).show();
+
                     }
+
 
 
                 }

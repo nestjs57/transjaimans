@@ -32,17 +32,18 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:background="@color/colorAccent"
+                android:background="@android:color/transparent"
                 android:text="ยกเลิก"
-                android:textColor="@color/cast_expanded_controller_progress_text_color" />
+                android:textColor="@color/cardview_dark_background" />
 
             <Button
                 android:id="@+id/button1"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:background="@color/cast_libraries_material_featurehighlight_text_body_color"
-                android:text="ตกลง" />
+                android:background="@android:color/transparent"
+                android:text="ตกลง"
+                android:textColor="@color/colorAccent" />
         </LinearLayout>
 
     </LinearLayout>

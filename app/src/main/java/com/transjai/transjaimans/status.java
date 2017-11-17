@@ -201,6 +201,7 @@ public class status extends Fragment implements OnMapReadyCallback {
                             confirmOrder = true;
                             final DatabaseReference dbreff = FirebaseDatabase.getInstance().getReference();
                             dbreff.child("order").child(String_push).child("status").setValue("delivering");
+                            dbreff.child("order").child(String_push).child("driver").setValue("Somsak Rakdee");
                             //Toast.makeText(getActivity(), "itemsnap", Toast.LENGTH_SHORT);
                             dialog.cancel();
 

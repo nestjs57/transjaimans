@@ -29,10 +29,40 @@ public class InfomationOrder extends Activity {
     private TextView txtForm;
     private TextView txtTo;
 
+    private TextView txtDateTime;
+    private TextView txtNameStore;
+    private TextView txtS;
+    private TextView txtM;
+    private TextView txtL;
+    private TextView txtDetail;
+    private TextView txtNote;
+    private TextView txtIncome;
+    private TextView totalBox;
+
     //
 
     private String String_push = "";
     private Boolean continueFirebase = false;
+
+    //setText
+    private String date = "";
+    private String time = "";
+    private String nameStore = "";
+    private String s = "";
+    private String m = "";
+    private String l = "";
+    private String detail = "";
+    private String note = "";
+    private String income = "";
+    private String form = "";
+    private String to = "";
+
+    String latFalse = "";
+    String lngFalse = "";
+
+    String latTrue = "";
+    String lngTrue = "";
+
 
 
     @Override
@@ -42,8 +72,28 @@ public class InfomationOrder extends Activity {
 
         BindWidget();
         SetEvent();
-        ShowFirebase(false);
 
+        ShowFirebase(false,false);
+
+
+    }
+
+    private void setTextEvent(String form,String to,String name, String date, String time, String s, String m, String l, String detail, String note, String income) {
+        BindWidget();
+        txtDateTime.setText(date + time);
+        txtNameStore.setText("Name Store : " +name);
+        txtS.setText(s);
+        txtM.setText(m);
+        txtL.setText(l);
+        txtDetail.setText(detail);
+        txtNote.setText(note);
+        txtIncome.setText(income);
+        totalBox.setText(Integer.parseInt(s) + Integer.parseInt(m) + Integer.parseInt(l) + " Boxs");
+        txtDetail.setText(detail);
+        txtNote.setText(note);
+        txtIncome.setText(income);
+        txtForm.setText(to);
+        txtTo.setText(form);
 
     }
 
@@ -53,6 +103,28 @@ public class InfomationOrder extends Activity {
         txtTo = (TextView) findViewById(R.id.txtTo);
         imgUser = (ImageView) findViewById(R.id.imageUser);
         Glide.with(getApplication()).load("https://scontent.fbkk5-5.fna.fbcdn.net/v/t1.0-9/12376459_1058731514179747_5170932025511786588_n.jpg?oh=3af05f5250a13388b894da030039d55f&oe=5AA8AF97").transform(new CircleTransform(getApplication())).into(imgUser);
+
+
+        //setText
+        txtDateTime = (TextView) findViewById(R.id.dateTime);
+        txtDateTime.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                finish();
+            }
+        });
+        txtS = (TextView) findViewById(R.id.txts);
+        txtM = (TextView) findViewById(R.id.txtm);
+        txtL = (TextView) findViewById(R.id.txtl);
+        txtDetail = (TextView) findViewById(R.id.txtDetail);
+        txtNote = (TextView) findViewById(R.id.txtNote);
+        txtIncome = (TextView) findViewById(R.id.txtIncomes);
+        totalBox = (TextView) findViewById(R.id.totalBox);
+        txtNameStore = (TextView) findViewById(R.id.txtNameStore);
+        txtForm = (TextView) findViewById(R.id.txtForm);
+        txtTo = (TextView) findViewById(R.id.txtTo);
+
+
 
     }
 
@@ -70,21 +142,20 @@ public class InfomationOrder extends Activity {
         txtForm.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                ShowFirebase(true);
-                continueFirebase = false;
-
-            }
+                ShowFirebase(true,false);
+                GoGoogleMap(latTrue, lngTrue);            }
         });
         txtTo.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                ShowFirebase(true);
-                continueFirebase = true;
+                ShowFirebase(true,true);
+                GoGoogleMap(latFalse, lngFalse);
+
             }
         });
     }
 
-    private void ShowFirebase(final Boolean aBoolean) {
+    private void ShowFirebase(final Boolean aBoolean , final Boolean continueFirebase) {
 
 
         final FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
@@ -99,21 +170,37 @@ public class InfomationOrder extends Activity {
 
                     String_push = itemsnap.getKey() + "";
 
-                    if (aBoolean == true) {
-                        if (continueFirebase == true) {
-                            String latFalse = (String) itemsnap.child("latCur_start").getValue();
-                            String lngFalse = (String) itemsnap.child("lngCur_start").getValue();
-//                            Toast.makeText(getApplication(),latFalse,Toast.LENGTH_SHORT).show();
 
-                            GoGoogleMap(latFalse, lngFalse);
-                        } else {
-                            String latTrue = (String) itemsnap.child("lat_choose_end").getValue();
-                            String lngTrue = (String) itemsnap.child("lng_choose_end").getValue();
-//                            Toast.makeText(getApplication(),"2",Toast.LENGTH_SHORT).show();
+                    date = (String) itemsnap.child("Day").getValue();
+                    time = (String) itemsnap.child("Time").getValue();
+                    nameStore = (String) itemsnap.child("Name").getValue();
+                    s = (String) itemsnap.child("NumOfSize_s").getValue();
+                    m = (String) itemsnap.child("NumOfSize_m").getValue();
+                    l = (String) itemsnap.child("NumOfSize_l").getValue();
+                    detail = (String) itemsnap.child("Detail").getValue();
+                    note = (String) itemsnap.child("Note").getValue();
+                    income = (String) itemsnap.child("income").getValue();
+                    form = (String) itemsnap.child("Location_From").getValue();
+                    to = (String) itemsnap.child("Location_To").getValue();
+                    setTextEvent(form,to,nameStore,date, time, s, m, l, detail, note, income);
 
-                            GoGoogleMap(latTrue, lngTrue);
-                        }
-                    }
+
+                    latFalse = (String) itemsnap.child("latCur_start").getValue();
+                    lngFalse = (String) itemsnap.child("lngCur_start").getValue();
+
+                    latTrue = (String) itemsnap.child("lat_choose_end").getValue();
+                    lngTrue = (String) itemsnap.child("lng_choose_end").getValue();
+
+//                    if (aBoolean == true && continueFirebase == true) {
+//
+//                            latFalse = (String) itemsnap.child("latCur_start").getValue();
+//                            lngFalse = (String) itemsnap.child("lngCur_start").getValue();
+////                            Toast.makeText(getApplication(),latFalse,Toast.LENGTH_SHORT).show();
+//                    }else {
+//                             latTrue = (String) itemsnap.child("lat_choose_end").getValue();
+//                             lngTrue = (String) itemsnap.child("lng_choose_end").getValue();
+////                            Toast.makeText(getApplication(),"2",Toast.LENGTH_SHORT).show();
+//                    }
 
 
                 }
